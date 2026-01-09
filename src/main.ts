@@ -1,11 +1,18 @@
 import "reflect-metadata";
 import "dotenv/config";
 
+import express from "express";
 import { buildContainer } from "./container/container";
-import { TYPES } from "./container/types";
-import type { IReportService } from "./domain/interfaces/IReportService";
+import { ReportController } from "./controller/ReportController";
+
+const app = express();
+const port = process.env.APP_PORT ? Number(process.env.APP_PORT) : 3000;
 
 const container = buildContainer();
-const service = container.get<IReportService>(TYPES.ReportService);
+const reportController = new ReportController(container);
 
-service.generateAndSend("teste@teste.com", 2);
+app.get("/relatorio/:n", reportController.handle);
+
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
+});
