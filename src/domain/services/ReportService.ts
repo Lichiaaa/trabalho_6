@@ -3,11 +3,15 @@ import { IMailer } from "../interfaces/IMailer";
 import { ILogger } from "../interfaces/ILogger";
 import { IReportService } from "../interfaces/IReportService";
 
-class ReportService implements IReportService{
+import { injectable, inject } from "inversify";
+import { TYPES } from "../../container/types";
+
+@injectable()
+export class ReportService implements IReportService{
     private logger: ILogger;
     private mailer: IMailer;
     
-    constructor(logger: ILogger, mailer: IMailer){
+    constructor(@inject(TYPES.Logger) logger: ILogger, @inject(TYPES.Mailer) mailer: IMailer){
         this.logger = logger;
         this.mailer = mailer;
     }
@@ -16,7 +20,7 @@ class ReportService implements IReportService{
         this.logger.info("Iniciando geração do relatório");
 
         //Verificar se n não é maior que 10, e se é inteiro
-        if(Number.isInteger(n) || n < 1 || n > 10){
+        if(!Number.isInteger(n) || n < 1 || n > 10){
             throw new Error("[ERROR]InvalidReportSizeError");
         }
 
